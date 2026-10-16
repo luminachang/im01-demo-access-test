@@ -1,0 +1,7 @@
+
+/* Fixed physical-size mode. Screen calibration is saved only on this device. */
+main{height:auto;min-height:100dvh;min-width:100%;width:max-content;padding:14px;}
+.device{height:auto;width:var(--device-width,592.25197px);max-width:none;flex:none;aspect-ratio:1567/1900;}
+#size-settings{position:fixed;right:16px;bottom:16px;z-index:20;border:1px solid #c8c2b9;border-radius:20px;padding:8px 14px;background:#faf8f2eb;color:#514e48;cursor:pointer;}
+#size-dialog{max-width:min(420px,90vw);border:1px solid #cec8bd;border-radius:14px;padding:24px;color:#393630;background:#faf9f6;}
+#size-dialog::backdrop{background:#0005}#size-dialog h2{margin:0 0 12px;font-size:18px}#size-dialog p{line-height:1.65;font-size:14px}#size-dialog input{width:100%;padding:10px;margin:10px 0;font:inherit}#size-dialog button{padding:8px 12px;margin:6px 4px 0 0;border:1px solid #ccc4b7;border-radius:7px;background:#f0ece4;cursor:pointer}#size-message{color:#685a40}

@@ -6,7 +6,7 @@ function hydrate(data){animateDial=false;for(const key of Object.keys(new Machin
 const dialArtwork=svg.querySelector('g[filter="url(#filter0_d_74_1649)"]');
 // Replace the raised pointer band with a smooth vector metal ring.
 const ringDefs=document.createElementNS(NS,'defs');
-ringDefs.innerHTML='<radialGradient id="plain-dial-metal" cx="30%" cy="20%" r="95%"><stop offset="0" stop-color="#969690"/><stop offset=".55" stop-color="#85857f"/><stop offset="1" stop-color="#686862"/></radialGradient>';
+ringDefs.innerHTML='<radialGradient id="plain-dial-metal" cx="30%" cy="20%" r="95%"><stop offset="0" stop-color="#96918b"/><stop offset=".55" stop-color="#85807a"/><stop offset="1" stop-color="#68635e"/></radialGradient>';
 svg.append(ringDefs);
 const smoothBand=document.createElementNS(NS,'circle');
 Object.entries({cx:780.6,cy:1142.2,r:147,fill:'none',stroke:'url(#plain-dial-metal)','stroke-width':52}).forEach(([k,v])=>smoothBand.setAttribute(k,v));

@@ -4,6 +4,14 @@ const room=new URLSearchParams(location.search).get('room')||'4d6c488470ec4f3fa8
 const clientId=crypto.randomUUID?.()||String(Date.now()+Math.random());let commandSeq=0,networkReady=false,syncBusy=false,isActive=false,animateDial=false,resetOnAcquire=true;
 function hydrate(data){animateDial=false;for(const key of Object.keys(new Machine()))if(Object.hasOwn(data,key))machine[key]=data[key];history=data.history||[];lastDialMode=machine.dialMode;commandSeq=data.ackSeq||0;}
 const dialArtwork=svg.querySelector('g[filter="url(#filter0_d_74_1649)"]');
+// Replace the raised pointer band with a smooth vector metal ring.
+const ringDefs=document.createElementNS(NS,'defs');
+ringDefs.innerHTML='<radialGradient id="plain-dial-metal" cx="30%" cy="20%" r="95%"><stop offset="0" stop-color="#969690"/><stop offset=".55" stop-color="#85857f"/><stop offset="1" stop-color="#686862"/></radialGradient>';
+svg.append(ringDefs);
+const smoothBand=document.createElementNS(NS,'circle');
+Object.entries({cx:780.6,cy:1142.2,r:147,fill:'none',stroke:'url(#plain-dial-metal)','stroke-width':52}).forEach(([k,v])=>smoothBand.setAttribute(k,v));
+dialArtwork.append(smoothBand);
+let dialRotation=0;
 // Keep the original SVG shadow and base stationary; rotate only the dial surface.
 const dialShadow=dialArtwork.cloneNode(true);dialShadow.id='dial-fixed-shadow';dialArtwork.before(dialShadow);dialArtwork.removeAttribute('filter');dialArtwork.id='dial-rotating-surface';
 const dotGroup=Array.from(svg.children).find(e=>e.getAttribute('opacity')==='0.14');
@@ -46,7 +54,7 @@ function render(){syncRunningSound();syncRetractSound();const s=machine;if(s.err
  lamp('respin',s.phase==='finished'||(s.on&&s.kind==='respin'&&['setup','running'].includes(s.phase)));
  const respinEnabled=s.phase==='finished'||(s.on&&s.kind==='respin'&&s.phase==='setup');
  document.querySelector('#hot-respin')?.setAttribute('aria-disabled',String(!respinEnabled));
- if(dialArtwork){lastDialMode=s.dialMode;let angle=modeAngles[lastDialMode]+15;dialArtwork.setAttribute('transform','rotate('+angle+' 780.6 1142.2)');dialArtwork.style.transition=animateDial&&!dragging?'transform .18s ease':'none';}
+ if(dialArtwork){lastDialMode=s.dialMode;let angle=dialRotation;dialArtwork.setAttribute('transform','rotate('+angle+' 780.6 1142.2)');dialArtwork.style.transition=animateDial&&!dragging?'transform .18s ease':'none';}
  lamp('finish',s.phase==='finished');lamp('pint',s.error==='pint',true);lamp('blade',s.error==='blade',true);lamp('retract',false);
  wait.style.display=['needHome','retracting'].includes(s.phase)?'block':'none';wait.style.animation=s.phase==='needHome'?'blink 1s steps(1) infinite':'none';
  let digit=null;if(s.on){if(s.phase==='error')digit='F';else if(['needHome','retracting','pending'].includes(s.phase))digit='-';else if(s.phase==='running')digit=String(Math.max(1,Math.min(9,Math.ceil(s.left/60))));else if(s.phase==='setup'&&selected)digit=s.mode===null?'-':String(Math.max(1,s.kind==='respin'?2:s.minutes));}
@@ -69,7 +77,7 @@ coords.forEach(([x,y],i)=>hot('mode'+i,'选择 '+modes[i],x-77,y-65,154,130,()=>
 hot('mix','选择 MIX-IN',460,1420,110,140,()=>machine.selectMode(8));hot('respin','选择 RE-SPIN',990,1420,120,140,()=>machine.respin());hot('power','电源',682,1430,196,132,()=>machine.power());
 hot('start','启动／停止',668,1023,237,239,()=>machine.start());
 const ring=hot('dial','旋钮',607,968,350,350,()=>{});svg.insertBefore(ring,document.querySelector('#hot-start'));ring.setAttribute('fill-rule','evenodd');
-function rotate(delta){if(!networkReady||!isActive)return;const order=[7,0,1,2,3,4,5,6];const index=order.indexOf(machine.dialMode);const next=Math.max(0,Math.min(7,index+delta));const mode=order[next];action('选择旋钮模式',()=>{if(['setup','finished'].includes(machine.phase)&&machine.on)machine.selectMode(mode);else machine.dialMode=mode;});}
+function rotate(delta){if(!networkReady||!isActive)return;const order=[7,0,1,2,3,4,5,6];const index=order.indexOf(machine.dialMode);const next=((index+delta)%order.length+order.length)%order.length;const mode=order[next];dialRotation+=delta*30;action('选择旋钮模式',()=>{if(['setup','finished'].includes(machine.phase)&&machine.on)machine.selectMode(mode);else machine.dialMode=mode;});}
 
 let dragging=false,lastAngle=0,acc=0,dragPointer=null;
 function endDrag(){dragging=false;dragPointer=null;acc=0;}

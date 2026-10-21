@@ -50,7 +50,7 @@ function render(){syncRunningSound();syncRetractSound();const s=machine;if(s.err
  selectable('power',s.supply,s.on);lamp('start',s.on&&(s.phase==='needHome'||s.phase==='running'||(s.phase==='setup'&&selected&&s.mode!==null)));
  for(let i=0;i<4;i++)selectable('qty'+i,ready&&s.phase!=='finished'&&(s.phase!=='running'||s.qty===i),s.qty===i);
  for(let i=0;i<8;i++){const visible=ready&&selected&&s.kind!=='respin'&&s.mode!==8&&s.phase!=='finished'&&(s.phase!=='running'||s.mode===i);selectable('mode'+i,visible,s.mode===i);const hot=document.getElementById('hot-mode'+i);if(hot){const interactive=visible&&isActive&&networkReady&&s.phase==='setup';hot.style.pointerEvents=interactive?'all':'none';hot.setAttribute('aria-disabled',String(!interactive));hot.setAttribute('tabindex',interactive?'0':'-1');hot.setAttribute('aria-hidden',String(!visible));}}
- selectable('mix',ready&&(s.phase!=='running'||s.mode===8),s.phase==='finished'||s.mode===8);
+ selectable('mix',ready&&(s.phase==='finished'||(s.kind!=='respin'&&(s.phase!=='running'||s.mode===8))),s.phase==='finished'||s.mode===8);
  for(let i=0;i<8;i++){if(modeDots[i]){const shown=ready&&selected&&s.kind!=='respin'&&s.mode!==8&&s.phase!=='finished'&&(s.phase!=='running'||s.mode===i);const chosen=shown&&s.mode===i;modeDots[i].setAttribute('fill',chosen?'#FFFFFF':'#000000');modeDots[i].setAttribute('opacity',shown?(chosen?'1':'.2'):'0');}}
  lamp('respin',s.phase==='finished'||(s.on&&s.kind==='respin'&&['setup','running'].includes(s.phase)));
  const respinEnabled=s.phase==='finished'||(s.on&&s.kind==='respin'&&s.phase==='setup');
